@@ -22,6 +22,7 @@ package snap
 import "github.com/ubuntu-core/snappy/release"
 
 var implicitSlots = []string{
+	"dbus-name",
 	"firewall-control",
 	"home",
 	"locale-control",
