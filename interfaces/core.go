@@ -157,6 +157,8 @@ const (
 var (
 	// ErrUnknownSecurity is reported when a interface is unable to deal with a given security system.
 	ErrUnknownSecurity = errors.New("unknown security system")
+	// ErrNotAllowed is reported when a slot/plug connection on the interface is not allowed
+	ErrNotAllowed = errors.New("interface connection is not allowed")
 )
 
 // Regular expression describing correct identifiers.
