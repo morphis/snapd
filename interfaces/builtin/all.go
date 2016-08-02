@@ -34,6 +34,7 @@ var allInterfaces = []interfaces.Interface{
 	&NetworkManagerInterface{},
 	&PppInterface{},
 	&SerialPortInterface{},
+	&GpioInterface{},
 	NewFirewallControlInterface(),
 	NewGsettingsInterface(),
 	NewHardwareObserveInterface(),

@@ -20,8 +20,14 @@
 package snap
 
 import (
+	"bytes"
 	"fmt"
+	"io"
 	"io/ioutil"
+	"os"
+	"path"
+	"strconv"
+	"strings"
 
 	"github.com/snapcore/snapd/osutil"
 	"github.com/snapcore/snapd/release"
@@ -58,6 +64,81 @@ var implicitClassicSlots = []string{
 	"camera",
 }
 
+var gpioSysfsBasePath = "/sys/class/gpio"
+var gpioChipPrefix = "gpiochip"
+
+func readNumber(path string) (number int, err error) {
+	f, err := os.Open(path)
+	if err != nil {
+		fmt.Println("Failed to open path ", path)
+		return
+	}
+
+	buf := bytes.NewBuffer(nil)
+	io.Copy(buf, f)
+	f.Close()
+
+	number, err = strconv.Atoi(strings.TrimSpace(string(buf.Bytes())))
+	return number, err
+}
+
+func createGpioSlots(snapInfo *Info, base int, ngpio int) {
+	for n := base; n < base+ngpio; n++ {
+		slotName := fmt.Sprintf("gpio-%d", n)
+		if _, ok := snapInfo.Slots[slotName]; !ok {
+			snapInfo.Slots[slotName] = &SlotInfo{
+				Name:      slotName,
+				Snap:      snapInfo,
+				Interface: "gpio",
+				Attrs:     map[string]interface{}{"number": n},
+			}
+		}
+	}
+}
+
+func addSlotsForGpioChip(snapInfo *Info, chipPath string) {
+	fmt.Printf("Adding slots for GPIO chip %s\n", chipPath)
+
+	base, err := readNumber(path.Join(chipPath, "base"))
+	if err != nil {
+		fmt.Printf("Failed to read base GPIO number for chip %s\n", chipPath)
+		return
+	}
+
+	ngpio, err := readNumber(path.Join(chipPath, "ngpio"))
+	if err != nil {
+		fmt.Printf("Failed to read number of GPIO for chip %s\n", chipPath)
+		return
+	}
+
+	createGpioSlots(snapInfo, base, ngpio)
+}
+
+func gpioCreateImplicitSlots(snapInfo *Info) {
+	fmt.Printf("Adding GPIO implicit slots\n")
+
+	d, err := os.Open(gpioSysfsBasePath)
+	if err != nil {
+		fmt.Printf("System without GPIO support!\n")
+		return
+	}
+
+	defer d.Close()
+
+	files, err := d.Readdir(-1)
+	if err != nil {
+		fmt.Printf("Failed to detect available GPIOs\n")
+		return
+	}
+
+	// Parse all GPIO chip's and add slots for their GPIOs
+	for _, file := range files {
+		if (file.Mode()&os.ModeSymlink != 0) && strings.HasPrefix(file.Name(), gpioChipPrefix) {
+			addSlotsForGpioChip(snapInfo, path.Join(gpioSysfsBasePath, file.Name()))
+		}
+	}
+}
+
 // AddImplicitSlots adds implicitly defined slots to a given snap.
 //
 // Only the OS snap has implicit slots.
@@ -73,6 +154,9 @@ func AddImplicitSlots(snapInfo *Info) {
 			snapInfo.Slots[ifaceName] = makeImplicitSlot(snapInfo, ifaceName)
 		}
 	}
+
+	gpioCreateImplicitSlots(snapInfo)
+
 	if !release.OnClassic {
 		return
 	}
