@@ -27,6 +27,7 @@ package udev
 import (
 	"bytes"
 	"fmt"
+	"hash/fnv"
 	"os"
 
 	"github.com/snapcore/snapd/dirs"
@@ -34,6 +35,10 @@ import (
 	"github.com/snapcore/snapd/osutil"
 	"github.com/snapcore/snapd/snap"
 )
+
+func snapSecurityTagGlob(snapName string) string {
+	return fmt.Sprintf("snap.%s", snapName)
+}
 
 // Backend is responsible for maintaining udev rules.
 type Backend struct{}
@@ -59,7 +64,7 @@ func (b *Backend) Setup(snapInfo *snap.Info, devMode bool, repo *interfaces.Repo
 	if err != nil {
 		return fmt.Errorf("cannot obtain expected udev rules for snap %q: %s", snapName, err)
 	}
-	glob := fmt.Sprintf("70-%s.rules", interfaces.SecurityTagGlob(snapName))
+	glob := fmt.Sprintf("70-%s.rules", snapSecurityTagGlob(snapName))
 	dir := dirs.SnapUdevRulesDir
 	if err := os.MkdirAll(dir, 0755); err != nil {
 		return fmt.Errorf("cannot create directory for udev rules %q: %s", dir, err)
@@ -74,7 +79,7 @@ func (b *Backend) Setup(snapInfo *snap.Info, devMode bool, repo *interfaces.Repo
 //
 // If the method fails it should be re-tried (with a sensible strategy) by the caller.
 func (b *Backend) Remove(snapName string) error {
-	glob := fmt.Sprintf("70-%s.rules", interfaces.SecurityTagGlob(snapName))
+	glob := fmt.Sprintf("70-%s.rules", snapSecurityTagGlob(snapName))
 	return ensureDirState(dirs.SnapUdevRulesDir, glob, nil, snapName)
 }
 
@@ -91,21 +96,45 @@ func ensureDirState(dir, glob string, content map[string]*osutil.FileState, snap
 	return errReload
 }
 
+func generateHash(bytes []byte) uint32 {
+	h := fnv.New32a()
+	h.Write(bytes)
+	return h.Sum32()
+}
+
 // combineSnippets combines security snippets collected from all the interfaces
 // affecting a given snap into a content map applicable to EnsureDirState.
 func (b *Backend) combineSnippets(snapInfo *snap.Info, snippets map[string][][]byte) (content map[string]*osutil.FileState, err error) {
+	var snapSnippets = make(map[uint32][]byte)
+	var finalSnapSnippets [][]byte
+
 	for _, appInfo := range snapInfo.Apps {
 		securityTag := appInfo.SecurityTag()
 		appSnippets := snippets[securityTag]
 		if len(appSnippets) == 0 {
 			continue
 		}
-		if content == nil {
-			content = make(map[string]*osutil.FileState)
-		}
 
-		addContent(securityTag, appSnippets, content)
+		// Add all app snippets to the snap snippet list and
+		// make sure we don't have doubles in there as they
+		// get all added to the same udev rule file in the
+		// end.
+		for _, snippet := range appSnippets {
+			snippetHash := generateHash(snippet)
+			if _, ok := snapSnippets[snippetHash]; ok {
+				continue
+			}
+			snapSnippets[snippetHash] = snippet
+			finalSnapSnippets = append(finalSnapSnippets, snippet)
+		}
 	}
+
+	if content == nil {
+		content = make(map[string]*osutil.FileState)
+	}
+
+	snapSecurityTag := snapSecurityTagGlob(snapInfo.Name())
+	addContent(snapSecurityTag, finalSnapSnippets, content)
 
 	for _, hookInfo := range snapInfo.Hooks {
 		securityTag := hookInfo.SecurityTag()
