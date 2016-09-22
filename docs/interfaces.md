@@ -383,6 +383,13 @@ apps.
 
 * Auto-Connect: no
 
+### netplan-control
+
+Can create and modify netplan configuration files. This is restricted because
+it gives access to system network configuration.
+
+* Auto-Connect: no
+
 ### network-control
 
 Can configure networking which gives wide, privileged access to networking.
