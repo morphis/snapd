@@ -461,6 +461,7 @@ func (s *baseDeclSuite) TestConnection(c *C) {
 	// connecting with these interfaces needs to be allowed on
 	// case-by-case basis
 	noconnect := map[string]bool{
+		"adb-control":      true,
 		"bluez":            true,
 		"docker":           true,
 		"fwupd":            true,

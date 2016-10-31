@@ -28,6 +28,7 @@ import (
 )
 
 var implicitSlots = []string{
+	"adb-control",
 	"bluetooth-control",
 	"dcdbas-control",
 	"docker-support",

@@ -153,6 +153,12 @@ plugs:
     allow-installation: false
     deny-auto-connection: true
 slots:
+  adb-control:
+    allow-installation:
+      slot-snap-type:
+        - core
+    deny-connection: true
+    deny-auto-connection: true
   bluetooth-control:
     allow-installation:
       slot-snap-type:
