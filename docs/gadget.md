@@ -16,7 +16,7 @@ conventions.
 The gadget snap has an additional `meta/gadget.yaml` file that describes
 the gadget specific configuration. The `gadget.yaml` structure is:
 
-    bootloader: {grub,uboot}
+    bootloader: {grub,uboot,fastboot}
 
 More entries to describe the partitions and bootloader installation
 will be added.
