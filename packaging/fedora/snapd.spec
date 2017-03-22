@@ -63,8 +63,6 @@ BuildRequires: golang(github.com/coreos/go-systemd/activation)
 BuildRequires: golang(github.com/gorilla/mux)
 BuildRequires: golang(github.com/jessevdk/go-flags)
 BuildRequires: golang(github.com/mvo5/uboot-go/uenv)
-# missing atm
-BuildRequires: golang(github.com/ojii/gettext.go)
 BuildRequires: golang(golang.org/x/crypto/openpgp/armor)
 BuildRequires: golang(golang.org/x/crypto/openpgp/packet)
 BuildRequires: golang(golang.org/x/crypto/sha3)
@@ -74,10 +72,11 @@ BuildRequires: golang(golang.org/x/net/context/ctxhttp)
 BuildRequires: golang(gopkg.in/check.v1)
 BuildRequires: golang(gopkg.in/macaroon.v1)
 BuildRequires: golang(gopkg.in/mgo.v2/bson)
-# missing atm
-BuildRequires: golang(gopkg.in/retry.v1)
 BuildRequires: golang(gopkg.in/tomb.v2)
 BuildRequires: golang(gopkg.in/yaml.v2)
+# missing atm
+BuildRequires: golang(gopkg.in/retry.v1)
+BuildRequires: golang(github.com/ojii/gettext.go)
 %else
 # These Provides are unversioned because the sources in
 # the bundled tarball are unversioned (they go by git commit)
