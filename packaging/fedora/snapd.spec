@@ -4,7 +4,8 @@
 %if 0%{?fedora}
 %global with_devel 1
 %global with_bundled 0
-%global with_debug 1
+# FIXME doesn't work yet
+%global with_debug 0
 %global with_check 0
 %global with_unit_test 0
 %else
@@ -306,6 +307,7 @@ autoreconf --force --install --verbose
 # FIXME: add --enable-caps-over-setuid as soon as possible (setuid discouraged!)
 %configure \
     --disable-apparmor \
+    --disable-seccomp \
     --libexecdir=%{_libexecdir}/snapd/ \
     --with-snap-mount-dir=%{_sharedstatedir}/snapd/snap \
     --with-merged-usr
@@ -354,7 +356,7 @@ install -p -m 0644 data/selinux/snappy.pp.bz2 %{buildroot}%{_datadir}/selinux/pa
 # Install snap and snapd
 install -p -m 0755 bin/snap %{buildroot}%{_bindir}
 install -p -m 0755 bin/snap-exec %{buildroot}%{_libexecdir}/snapd
-install -p -m 0755 bin/snapctl %{buildroot}%{_libexecdir}/snapctl
+install -p -m 0755 bin/snapctl %{buildroot}%{_bindir}/snapctl
 install -p -m 0755 bin/snapd %{buildroot}%{_libexecdir}/snapd
 
 # Install snap(1) man page
@@ -370,10 +372,10 @@ rm -rfv %{buildroot}%{_sysconfdir}/apparmor.d
 popd
 
 # Install all systemd units
-install -p -m 0644 packaging/fedora-25/systemd/snapd.socket %{buildroot}%{_unitdir}
-install -p -m 0644 packaging/fedora-25/systemd/snapd.service %{buildroot}%{_unitdir}
-install -p -m 0644 packaging/fedora-25/systemd/snapd.refresh.service %{buildroot}%{_unitdir}
-install -p -m 0644 packaging/fedora-25/systemd/snapd.refresh.timer %{buildroot}%{_unitdir}
+install -p -m 0644 data/systemd/snapd.socket %{buildroot}%{_unitdir}
+install -p -m 0644 data/systemd/snapd.service %{buildroot}%{_unitdir}
+install -p -m 0644 data/systemd/snapd.refresh.service %{buildroot}%{_unitdir}
+install -p -m 0644 data/systemd/snapd.refresh.timer %{buildroot}%{_unitdir}
 
 # Put /var/lib/snapd/snap/bin on PATH
 # Put /var/lib/snapd/desktop on XDG_DATA_DIRS
@@ -430,10 +432,12 @@ export GOPATH=%{buildroot}/%{gopath}:$(pwd)/Godeps/_workspace:%{gopath}
 %gotest %{import_path}
 %endif
 
+%if 0%{?with_check}
 # snap-confine tests (these always run!)
 pushd ./cmd
 make check
 popd
+%endif
 
 %files
 #define license tag if not already defined
@@ -441,6 +445,7 @@ popd
 %license COPYING 
 %doc README.md docs/*
 %{_bindir}/snap
+%{_bindir}/snapctl
 %{_libexecdir}/snapd/
 %{_mandir}/man1/snap.1*
 %{_sysconfdir}/profile.d/snapd.sh
@@ -465,10 +470,11 @@ popd
 # FIXME: Switch to "%%attr(0755,root,root) %%caps(cap_sys_admin=pe)" asap!
 %attr(4755,root,root) %{_libexecdir}/snapd/snap-confine
 %{_libexecdir}/snapd/snap-discard-ns
+%{_libexecdir}/snapd/snap-update-ns
 %{_bindir}/ubuntu-core-launcher
-%{_mandir}/man1/ubuntu-core-launcher.1.*
 %{_mandir}/man5/snap-confine.5.*
 %{_mandir}/man5/snap-discard-ns.5.*
+%{_mandir}/man5/snap-update-ns.5.*
 %{_prefix}/lib/udev/snappy-app-dev
 %{_udevrulesdir}/80-snappy-assign.rules
 %attr(0000,root,root) %{_sharedstatedir}/snapd/void
