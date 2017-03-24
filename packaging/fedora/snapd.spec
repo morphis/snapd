@@ -323,10 +323,11 @@ export GOPATH=$(pwd):%{gopath}
 export GOPATH=$(pwd):$(pwd)/Godeps/_workspace:%{gopath}
 %endif
 
-%gobuild -o bin/snap %{import_path}/cmd/snap
-%gobuild -o bin/snap-exec %{import_path}/cmd/snap-exec
-%gobuild -o bin/snapctl %{import_path}/cmd/snapctl
-%gobuild -o bin/snapd %{import_path}/cmd/snapd
+# FIXME: %gobuild macro doesn't work well yet
+go build -o bin/snap %{import_path}/cmd/snap
+go build -o bin/snap-exec %{import_path}/cmd/snap-exec
+go build -o bin/snapctl %{import_path}/cmd/snapctl
+go build -o bin/snapd %{import_path}/cmd/snapd
 
 
 %install
