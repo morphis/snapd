@@ -1,0 +1,27 @@
+From 4a58d361bef75b90214010eaa0bf9a86dee5d28b Mon Sep 17 00:00:00 2001
+From: Simon Fels <morphis@gravedo.de>
+Date: Fri, 24 Mar 2017 11:17:11 +0100
+Subject: [PATCH 2/2] cmd: system-shutdown: use provided CFLAGS/LDFLAGS
+
+---
+ cmd/Makefile.am | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/cmd/Makefile.am b/cmd/Makefile.am
+index 4352451..367106e 100644
+--- a/cmd/Makefile.am
++++ b/cmd/Makefile.am
+@@ -336,8 +336,8 @@ system_shutdown_system_shutdown_SOURCES = \
+ 	system-shutdown/system-shutdown-utils.h \
+ 	system-shutdown/system-shutdown.c
+ system_shutdown_system_shutdown_LDADD = libsnap-confine-private.a
+-system_shutdown_system_shutdown_CFLAGS = $(filter-out -fPIE -pie,$(CFLAGS)) -static
+-system_shutdown_system_shutdown_LDFLAGS = $(filter-out -fPIE -pie,$(LDFLAGS)) -static
++system_shutdown_system_shutdown_CFLAGS = -Wall -Werror $(AM_CFLAGS)
++system_shutdown_system_shutdown_LDFLAGS = $(AM_LDFLAGS)
+ 
+ if WITH_UNIT_TESTS
+ noinst_PROGRAMS += system-shutdown/system-shutdown-unit-tests
+-- 
+2.9.3
+

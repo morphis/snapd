@@ -41,6 +41,8 @@ Source0:        https://%{provider_prefix}/archive/%{version}/%{name}-%{version}
 %else
 Source0:        https://%{provider_prefix}/releases/download/%{version}/%{name}_%{version}.tar.xz
 %endif
+Patch0:         0001-cmd-link-libcap-dynamically.patch
+Patch1:         0002-cmd-system-shutdown-use-provided-CFLAGS-LDFLAGS.patch
 
 # e.g. el6 has ppc64 arch without gcc-go, so EA tag is required
 ExclusiveArch:  %{?go_arches:%{go_arches}}%{!?go_arches:%{ix86} x86_64 %{arm}}
@@ -284,6 +286,8 @@ providing packages with %{import_path} prefix.
 
 %prep
 %setup -q
+%patch0 -p1 -b .libcap
+%patch1 -p1 -b .shutdown
 
 
 %build
