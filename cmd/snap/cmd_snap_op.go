@@ -36,6 +36,7 @@ import (
 	"github.com/snapcore/snapd/i18n"
 	"github.com/snapcore/snapd/osutil"
 	"github.com/snapcore/snapd/progress"
+	"github.com/snapcore/snapd/release"
 )
 
 func lastLogStr(logs []string) string {
@@ -437,6 +438,14 @@ func (x *cmdInstall) installOne(name string, opts *client.SnapOptions) error {
 	var err error
 	var installFromFile bool
 	var changeID string
+
+	switch release.ReleaseInfo.ID {
+	case "fedora", "centos", "rhel", "opensuse", "suse":
+		if opts.Classic {
+			fmt.Fprintf(Stderr, i18n.G("snap %q can not be installed as classic snaps are not supported on your distribution\n"), name)
+			return nil
+		}
+	}
 
 	cli := Client()
 	if strings.Contains(name, "/") || strings.HasSuffix(name, ".snap") || strings.Contains(name, ".snap.") {
