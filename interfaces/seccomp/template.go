@@ -548,4 +548,14 @@ pwritev
 # This is an older interface and single entry point that can be used instead
 # of socket(), bind(), connect(), etc individually.
 socketcall
+
+# Allow bind() as the golang net package uses this on initialization when
+# loaded the first time and on systems without an LSM system this kills
+# snapctl when executed in a hook when the network-bind interface isn't
+# plugged. See https://forum.snapcraft.io/t/hooks-calling-snapctl-are-broken-with-just-seccomp-enabled/658/
+# for more details.
+#
+# NOTE: This is only meant for Fedora and openSUSE and shouldn't be
+# applied upstream.
+bind
 `)
