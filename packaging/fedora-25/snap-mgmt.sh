@@ -23,8 +23,8 @@ if [ "$1" = "purge" ]; then
         umount -l ${SNAP_MOUNT_DIR} || true
     fi
 
-    mounts=$(systemctl list-unit-files --full | grep '^snap[-.].*\.mount' | cut -f1 -d ' ')
-    services=$(systemctl list-unit-files --full | grep '^snap[-.].*\.service' | cut -f1 -d ' ')
+    mounts=$(systemctl list-unit-files --full | grep '^var-lib-snapd-snap[-.].*\.mount' | cut -f1 -d ' ')
+    services=$(systemctl list-unit-files --full | grep '^var-lib-snapd-snap[-.].*\.service' | cut -f1 -d ' ')
     for unit in $services $mounts; do
         # ensure its really a snap mount unit or systemd unit
         if ! grep -q 'What=/var/lib/snapd/snaps/' "/etc/systemd/system/$unit" && ! grep -q 'X-Snappy=yes' "/etc/systemd/system/$unit"; then
@@ -89,5 +89,5 @@ if [ "$1" = "purge" ]; then
     rm -rf /var/lib/snapd/seccomp/profiles/*
     rm -rf /var/lib/snapd/device/*
     rm -rf /var/lib/snapd/assertions/*
-
+    rm -rf /var/lib/snapd
 fi

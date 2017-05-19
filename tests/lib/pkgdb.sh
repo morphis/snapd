@@ -7,6 +7,11 @@ debian_name_package() {
         xdelta3|curl|python3-yaml|kpartx|busybox-static)
             echo "$1"
             ;;
+        *)
+            echo $1
+            ;;
+    esac
+}
 
 fedora_name_package() {
     case "$1" in

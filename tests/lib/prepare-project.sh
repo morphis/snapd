@@ -56,6 +56,8 @@ fedora_build_rpm() {
     mkdir -p $HOME/rpmbuild/SOURCES
     (cd /tmp/pkg; tar czf $HOME/rpmbuild/SOURCES/snapd-$version.tar.gz snapd-$version --exclude=vendor/)
 
+    cp packaging/fedora-25/* $HOME/rpmbuild/SOURCES/
+
     rpmbuild -bs packaging/fedora-25/snapd.spec
     # FIXME 1.fc25 + arch needs to be dynamic as well
     mock /root/rpmbuild/SRPMS/snapd-$version-1.fc25.src.rpm
@@ -184,6 +186,10 @@ if [ -z "$SNAPD_PUBLISHED_VERSION" ]; then
          ;;
       fedora-*)
          fedora_build_rpm
+         ;;
+      *)
+         ;;
+   esac
 else
     download_from_published "$SNAPD_PUBLISHED_VERSION"
     install_dependencies_from_published "$SNAPD_PUBLISHED_VERSION"
