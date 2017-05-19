@@ -4,6 +4,7 @@ systems:
     - -ubuntu-core-16-*
     # No confinement (AppArmor, Seccomp) available on these systems
     - -debian-*
+    - -fedora-*
 
 summary: |
     The locale-control interface allows a snap to access the locale configuration.

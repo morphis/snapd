@@ -3,6 +3,7 @@ summary: Ensure that the network-bind interface works
 systems:
     # No confinement (AppArmor, Seccomp) available on these systems
     - -debian-*
+    - -fedora-*
 
 details: |
     The network-bind interface allows a daemon to access the network as a server.

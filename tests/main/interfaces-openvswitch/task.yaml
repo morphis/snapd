@@ -4,6 +4,7 @@ systems:
     - -ubuntu-core-*
     # No confinement (AppArmor, Seccomp) available on these systems
     - -debian-*
+    - -fedora-*
 
 details: |
     The openvswitch interface allows to task to the openvswitch socket (rw mode).

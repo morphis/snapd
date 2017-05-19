@@ -3,6 +3,7 @@ summary: Ensures that the system-observe interface works.
 systems:
     # No confinement (AppArmor, Seccomp) available on these systems
     - -debian-*
+    - -fedora-*
 
 details: |
     A snap declaring the system-observe plug is defined, its command

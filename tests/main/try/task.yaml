@@ -3,6 +3,7 @@ systems:
     - -ubuntu-core-16-*
     # No confinement (AppArmor, Seccomp) available on these systems
     - -debian-*
+    - -fedora-*
 environment:
     PORT: 8081
     SERVICE_FILE: "./service.sh"

@@ -3,6 +3,7 @@ summary: Ensure that the home interface works.
 systems:
     # No confinement (AppArmor, Seccomp) available on these systems
     - -debian-*
+    - -fedora-*
 
 details: |
     The home interface allows a snap to access non-hidden files in $HOME

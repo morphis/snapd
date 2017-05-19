@@ -6,6 +6,7 @@ systems:
     - -ubuntu-*-ppc64el
     # No confinement (AppArmor, Seccomp) available on these systems
     - -debian-*
+    - -fedora-*
 
 summary: |
     The upower-observe interface allows a snap to query UPower for power devices, history
