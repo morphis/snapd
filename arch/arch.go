@@ -22,6 +22,8 @@ package arch
 import (
 	"log"
 	"runtime"
+
+	"github.com/snapcore/snapd/release"
 )
 
 // ArchitectureType is the type for a supported snappy architecture
@@ -62,6 +64,18 @@ func ubuntuArchFromGoArch(goarch string) string {
 		"ppc64le": "ppc64el",
 		"s390x":   "s390x",
 		"ppc":     "powerpc",
+	}
+
+	// If we are running on an ARM platform we need to have a
+	// closer look if we are on armhf or armel. If we're not
+	// on a armv6l platform we can continue to use the Go
+	// arch mapping. The Go arch sadly doesn't map this out
+	// for us so we have to fallback to uname here.
+	if goarch == "arm" {
+		machineName := release.Machine()
+		if machineName == "armv6l" {
+			return "armel"
+		}
 	}
 
 	ubuntuArch := goArchMapping[goarch]
