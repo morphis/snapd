@@ -23,10 +23,9 @@ import (
 	"syscall"
 )
 
-func getKernelRelease(buf *syscall.Utsname) string {
-	input := buf.Release[:]
+func convertUtsnameItem(input []int8) string {
 	// The Utsname structures uses [65]int8 or [65]uint8, depending on
-	// architecture, to represent various fields. We need to conver them to
+	// architecture, to represent various fields. We need to convert them to
 	// strings.
 	output := make([]byte, 0, len(input))
 	for _, c := range input {
@@ -48,5 +47,15 @@ func KernelVersion() string {
 		return "unknown"
 	}
 	// Release is more informative than Version.
-	return getKernelRelease(&buf)
+	return convertUtsnameItem(buf.Release[:])
+}
+
+// Machine returns the name of the machine or the string "unknown" if one cannot be determined.
+func Machine() string {
+	var buf syscall.Utsname
+	err := syscall.Uname(&buf)
+	if err != nil {
+		return "unknown"
+	}
+	return convertUtsnameItem(buf.Machine[:])
 }

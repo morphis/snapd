@@ -33,9 +33,9 @@ func (s *ReleaseTestSuite) TestKernelVersion(c *C) {
 	c.Check(ver, Not(Equals), "")
 }
 
-func (s *ReleaseTestSuite) TestGetKenrelRelease(c *C) {
+func (s *ReleaseTestSuite) TestConvertUtsnameItem(c *C) {
 	var buf syscall.Utsname
-	c.Check(release.GetKernelRelease(&buf), Equals, "")
+	c.Check(release.ConvertUtsnameItem(buf.Release[:]), Equals, "")
 
 	buf.Release[0] = 'f'
 	buf.Release[1] = 'o'
@@ -48,5 +48,5 @@ func (s *ReleaseTestSuite) TestGetKenrelRelease(c *C) {
 	buf.Release[8] = 'e'
 	buf.Release[9] = 'd'
 
-	c.Check(release.GetKernelRelease(&buf), Equals, "foo")
+	c.Check(release.ConvertUtsnameItem(buf.Release[:]), Equals, "foo")
 }

@@ -20,5 +20,5 @@
 package release
 
 var (
-	GetKernelRelease = getKernelRelease
+	ConvertUtsnameItem = convertUtsnameItem
 )
