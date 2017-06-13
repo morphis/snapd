@@ -153,7 +153,10 @@ if [ "$SPREAD_BACKEND" = external ]; then
    fi
    # stop and disable autorefresh
    if [ -e "$SNAPMOUNTDIR/core/current/meta/hooks/configure" ]; then
-       systemctl disable --now snapd.refresh.timer
+       # Can't use --now here as not all systems we target
+       # have support for it (e.g. Raspbian 8 with systemd 215)
+       systemctl stop snapd.refresh.timer
+       systemctl disable snapd.refresh.timer
        snap set core refresh.disabled=true
    fi
    chown test.test -R "$PROJECT_PATH"

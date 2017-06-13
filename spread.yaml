@@ -315,7 +315,10 @@ restore: |
     if [ "$SPREAD_BACKEND" = external ]; then
         # start and enable autorefresh
         if [ -e /snap/core/current/meta/hooks/configure ]; then
-            systemctl enable --now snapd.refresh.timer
+            # Can't use --now here as not all systems we target
+            # have support for it (e.g. Raspbian 8 with systemd 215)
+            systemctl enable snapd.refresh.timer
+            systemctl start snapd.refresh.timer
             snap set core refresh.disabled=false
         fi
     fi
