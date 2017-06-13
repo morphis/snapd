@@ -174,6 +174,11 @@ EOF
             fedora-*|opensuse-*)
                 GRUB_EDITENV=grub2-editenv
                 ;;
+            raspbian-*)
+                # There is no grub-editenv on raspbian and no package seems to
+                # provide it so we set a command here which will never fail.
+                GRUB_EDITENV=/bin/true
+                ;;
         esac
 
         echo "Ensure that the grub-editenv list output does not contain any of the snap_* variables on classic"
