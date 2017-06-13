@@ -109,7 +109,7 @@ prepare_classic() {
         echo "Package build incorrect, 'snap-confine --version' mentions 'unknown'"
         $LIBEXECDIR/snapd/snap-confine --version
         case "$SPREAD_SYSTEM" in
-            ubuntu-*|debian-*)
+            ubuntu-*|debian-*|raspbian-*)
                 apt-cache policy snapd
                 ;;
             fedora-*)

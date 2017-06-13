@@ -289,7 +289,7 @@ prepare: |
         # NOTE: We can't use tests/lib/pkgdb.sh here as it doesn't exist at
         # this time when none of the test files is yet in place.
         case "$SPREAD_SYSTEM" in
-            ubuntu-*|debian-*)
+            ubuntu-*|debian-*|raspbian-*)
                 apt-get update >& "$tf" || ( cat "$tf"; exit 1 )
                 apt-get install -y xdelta3 curl >& "$tf" || ( cat "$tf"; exit 1 )
                 ;;

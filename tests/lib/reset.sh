@@ -13,7 +13,7 @@ reset_classic() {
     systemctl stop snapd.service snapd.socket
 
     case "$SPREAD_SYSTEM" in
-        ubuntu-*|debian-*)
+        ubuntu-*|debian-*|raspbian-*)
             sh -x "${SPREAD_PATH}/debian/snapd.postrm" purge
             ;;
         fedora-*|opensuse-*)
