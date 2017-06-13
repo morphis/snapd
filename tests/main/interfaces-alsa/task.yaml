@@ -62,6 +62,10 @@ execute: |
     snap disconnect generic-consumer:alsa
     snap interfaces | MATCH "$DISCONNECTED_PATTERN"
 
+    if [ "$(snap debug confinement)" = none ]; then
+        exit 0
+    fi
+
     echo "The snap is not able to access snd devices"
     if generic-consumer.cmd touch /dev/snd/mysnd-dev 2>snd-create.error; then
         echo "Create snd device with disconnected plug should fail"

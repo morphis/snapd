@@ -79,6 +79,10 @@ execute: |
     snap disconnect firewall-control-consumer:firewall-control
     snap interfaces | MATCH "$DISCONNECTED_PATTERN"
 
+    if [ "$(snap debug confinement)" = none ]; then
+        exit 0
+    fi
+
     echo "Then the snap is not able to configure the firewall"
     if firewall-control-consumer.create 2>firewall-create.error; then
         echo "Expected permission error creating firewall rules with disconnected plug"
