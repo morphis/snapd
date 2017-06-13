@@ -41,7 +41,7 @@ opensuse_name_package() {
 
 distro_name_package() {
     case "$SPREAD_SYSTEM" in
-        ubuntu-*|debian-*)
+        ubuntu-*|debian-*|raspbian-*)
             debian_name_package "$1"
             ;;
         fedora-*)
@@ -71,7 +71,7 @@ distro_install_local_package() {
     done
 
     case "$SPREAD_SYSTEM" in
-        ubuntu-14.04-*|debian-*)
+        ubuntu-14.04-*|debian-*|raspbian-*)
             # relying on dpkg as apt(-get) does not support installation from local files in trusty.
             dpkg -i --force-depends --auto-deconfigure --force-depends-version "$@"
             apt-get -f install -y
@@ -107,7 +107,7 @@ distro_install_package() {
         fi
 
         case "$SPREAD_SYSTEM" in
-            ubuntu-*|debian-*)
+            ubuntu-*|debian-*|raspbian-*)
                 quiet apt-get install -y "$package_name"
                 ;;
             fedora-*)
@@ -134,7 +134,7 @@ distro_purge_package() {
         fi
 
         case "$SPREAD_SYSTEM" in
-            ubuntu-*|debian-*)
+            ubuntu-*|debian-*|raspbian-*)
                 quiet apt-get remove -y --purge -y "$package_name"
                 ;;
             fedora-*)
@@ -153,7 +153,7 @@ distro_purge_package() {
 
 distro_update_package_db() {
     case "$SPREAD_SYSTEM" in
-        ubuntu-*|debian-*)
+        ubuntu-*|debian-*|raspbian-*)
             quiet apt-get update
             ;;
         fedora-*)
@@ -171,7 +171,7 @@ distro_update_package_db() {
 
 distro_clean_package_cache() {
     case "$SPREAD_SYSTEM" in
-        ubuntu-*|debian-*)
+        ubuntu-*|debian-*|raspbian-*)
             quiet apt-get clean
             ;;
         opensuse-*)
@@ -186,7 +186,7 @@ distro_clean_package_cache() {
 
 distro_auto_remove_packages() {
     case "$SPREAD_SYSTEM" in
-        ubuntu-*|debian-*)
+        ubuntu-*|debian-*|raspbian-*)
             quiet apt-get -y autoremove
             ;;
         fedora-*)
@@ -203,7 +203,7 @@ distro_auto_remove_packages() {
 
 distro_query_package_info() {
     case "$SPREAD_SYSTEM" in
-        ubuntu-*|debian-*)
+        ubuntu-*|debian-*|raspbian-*)
             apt-cache policy "$1"
             ;;
         fedora-*)
@@ -227,7 +227,7 @@ distro_install_build_snapd(){
     else
         packages=
         case "$SPREAD_SYSTEM" in
-            ubuntu-*|debian-*)
+            ubuntu-*|debian-*|raspbian-*)
                 packages="${GOHOME}/snapd_*.deb"
                 ;;
             fedora-*)
@@ -256,7 +256,7 @@ distro_install_build_snapd(){
 # system to provide a basic build environment for snapd.
 export DISTRO_BUILD_DEPS=()
 case "$SPREAD_SYSTEM" in
-    debian-*|ubuntu-*)
+    debian-*|ubuntu-*|raspbian-*)
         DISTRO_BUILD_DEPS=(build-essential curl devscripts expect gdebi-core jq rng-tools git netcat-openbsd)
         ;;
     fedora-*)
