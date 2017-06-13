@@ -427,7 +427,8 @@ suites:
                 exit 0
             fi
             $TESTSLIB/reset.sh
-            apt-get purge -y snapd
+            . "$TESTSLIB/pkgdb.sh"
+            distro_purge_package snapd
 
     tests/unit/:
         summary: Suite to run unit tests (non-go and different go runtimes)
@@ -455,7 +456,8 @@ suites:
             prepare_each_classic
         restore: |
             $TESTSLIB/reset.sh --store
-            apt-get purge -y snapd snap-confine ubuntu-core-launcher
+            . "$TESTSLIB/pkgdb.sh"
+            distro_purge_package snapd snap-confine ubuntu-core-launcher
 
     tests/nightly/:
         summary: Suite for nightly, expensive, tests
@@ -476,7 +478,8 @@ suites:
         restore: |
             $TESTSLIB/reset.sh
             if [[ "$SPREAD_SYSTEM" != ubuntu-core-16-* ]]; then
-                apt-get purge -y snapd
+                . "$TESTSLIB/pkgdb.sh"
+                distro_purge_package snapd
             fi
 
     tests/nested/:
