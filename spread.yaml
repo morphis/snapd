@@ -195,6 +195,9 @@ backends:
             - ubuntu-core-16-arm-32:
                 username: test
                 password: ubuntu
+            - raspbian-8-arm-32:
+                username: test
+                password: ubuntu
 
 path: /home/gopath/src/github.com/snapcore/snapd
 
