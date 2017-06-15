@@ -60,7 +60,7 @@ ifeq ($(shell dpkg-vendor --query Vendor),Debian)
     VENDOR_ARGS=--disable-apparmor --disable-seccomp
     BUILT_USING_PACKAGES=libcap-dev
 else
-    VENDOR_ARGS=--disable-apparmor
+    VENDOR_ARGS=--disable-apparmor --disable-seccomp
 endif
 endif
 BUILT_USING=$(shell dpkg-query -f '$${source:Package} (= $${source:Version}), ' -W $(BUILT_USING_PACKAGES))
