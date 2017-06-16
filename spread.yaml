@@ -198,6 +198,9 @@ backends:
             - raspbian-8-arm-32:
                 username: test
                 password: ubuntu
+                # Give system a bit more time to finish things as it's
+                # quite slow at times
+                kill-timeout: 40m
 
 path: /home/gopath/src/github.com/snapcore/snapd
 
