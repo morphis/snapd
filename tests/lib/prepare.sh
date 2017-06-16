@@ -120,11 +120,12 @@ prepare_classic() {
     fi
 
     START_LIMIT_INTERVAL="StartLimitInterval=0"
-    if [[ "$SPREAD_SYSTEM" = opensuse-42.2-* ]]; then
-        # StartLimitInterval is not supported by the systemd version
-        # openSUSE 42.2 ships.
-        START_LIMIT_INTERVAL=""
-    fi
+    case "$SPREAD_SYSTEM" in
+        opensuse-42.2-*|raspbian-8-*)
+            # StartLimitInterval is not supported by the systemd version
+            # openSUSE 42.2 / Raspbian ship
+            START_LIMIT_INTERVAL=""
+    esac
 
     mkdir -p /etc/systemd/system/snapd.service.d
     cat <<EOF > /etc/systemd/system/snapd.service.d/local.conf
