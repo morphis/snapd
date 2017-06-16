@@ -1,5 +1,10 @@
 summary: Check that snapd can be built without cgo
 systems: [-ubuntu-core-16-*]
 execute: |
+    if [ "$SRU_VALIDATION" -eq 1 ]; then
+        # We don't have the necessary bits available to build snapd when
+        # we're running for SRU validataion.
+        exit 0
+    fi
     CGO_ENABLED=0 go build -o snapd.static github.com/snapcore/snapd/cmd/snapd
     ldd snapd.static && exit 1 || true
